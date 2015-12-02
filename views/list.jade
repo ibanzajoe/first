@@ -1,0 +1,18 @@
+html
+    head
+        title!=title
+    body
+        h1!=message
+        a(href='/movie') add movie
+        table
+            tr
+                td title
+                td ratings
+                td releaseYear
+            each val in movies
+                tr
+                    td=val.title
+                    td=val.rating
+                    td=val.releaseYear
+
+

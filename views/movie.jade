@@ -1,0 +1,14 @@
+html
+    head
+        title!=title
+    body
+        h1 Hey You!
+        form(method="POST" action="/insert")
+            p Please enter movie title:
+            input(type="text" name='title')
+            P Please enter movie rating:
+            input(type="text" name='rating')
+            p Please enter movie year:
+            input(type="text" name='releaseYear')
+            input(type="submit" value="submit")
+
