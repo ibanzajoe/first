@@ -1,7 +1,8 @@
 var mongoose = require('mongoose'),
     express = require('express'),
     Movie = require('./schemas/movie'),
-    bodyParser = require('body-parser');
+    bodyParser = require('body-parser'),
+    request = require('request');
 
 var db = mongoose.connection;
 db.on('error', console.error);
@@ -48,16 +49,19 @@ app.post('/insert', function(req,res){
         res.redirect('/')
     });
 })
-app.get('/delete/:id')
+app.get('/request', function(req, res){
+    res.render('urlsearch');
+})
 
-app.get('/test')
-app.get('/delete')
-
-//app.post('/insert', function(req, res){
-//    req.
-//    var nMovie = new Movie({
-//        title: mTitle,
-//        rating: mRating,
+app.post('/return', function(req, res){
+    var xurl = req.body.url;
+    console.log(xurl);
+    request(xurl, function (error, response, body){
+           if (!error && response.statusCode == 200){
+               res.send(body)
+           }
+    })
+})
 //        releaseYear: mYear,
 //        hasCreditCookie: true
 //    });
@@ -67,8 +71,7 @@ app.get('/delete')
 //    });
 //});
 
-app.get('/search',
-    function(req, res){
+app.get('/search', function(req, res){
         res.send('POST request to search app');
         Movie.find(function(err, movie) {                      //This is the "find" method on mongoose that returns all value under the "movies" document
         if (err) return console.error(err);                 //if error, output error on console.log
