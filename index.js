@@ -2,17 +2,24 @@ var mongoose = require('mongoose'),
     express = require('express'),
     Movie = require('./schemas/movie'),
     bodyParser = require('body-parser'),
-    request = require('request');
-
+    request = require('request'),
+    cheerio = require('cheerio');
 var db = mongoose.connection;
 db.on('error', console.error);
 db.once('open', function() {
-
 });
-
 var app = express();
 app.set('view engine', 'jade');
 app.use(bodyParser.urlencoded({extended:true}));
+var server = app.listen(3000, function(){
+    var host = server.address().address;
+    var port = server.address().port;
+    console.log('example app listening at http://%s:%s', host, port);
+});
+mongoose.connect('mongodb://localhost/test');
+// the routes:
+
+
 
 
 app.get('/', function (req, res){
@@ -24,18 +31,8 @@ app.get('/', function (req, res){
             message: 'tu mardre',
             movies: movies
         })
-
     });
 });
-
-var server = app.listen(3000, function(){
-    var host = server.address().address;
-    var port = server.address().port;
-    console.log('example app listening at http://%s:%s', host, port);
-});
-
-
-mongoose.connect('mongodb://localhost/test');
 
 app.post('/insert', function(req,res){
     var nMovie = new Movie({
@@ -49,6 +46,7 @@ app.post('/insert', function(req,res){
         res.redirect('/')
     });
 })
+
 app.get('/request', function(req, res){
     res.render('urlsearch');
 })
@@ -58,18 +56,11 @@ app.post('/return', function(req, res){
     console.log(xurl);
     request(xurl, function (error, response, body){
            if (!error && response.statusCode == 200){
-               res.send(body)
+               $ = cheerio.load(body);
+               console.log($);
            }
     })
 })
-//        releaseYear: mYear,
-//        hasCreditCookie: true
-//    });
-//    nMovie.save(function(err, movie){
-//        if(err) return console.error(err);
-//        console.dir(movie);
-//    });
-//});
 
 app.get('/search', function(req, res){
         res.send('POST request to search app');
@@ -86,12 +77,6 @@ app.get('/remove', function(req, res){
     });
 });
 
-app.get('/movie', function (req, res){
-        res.render('movie',
-    {
-        title: 'hello world'
-    });
-});
 
 // Find all movies that have a credit cookie.
 Movie.find({ hasCreditCookie: true }, function(err, movies) {   //this is using the "find all" method but specificying the "creditCookie" value to only return "true"
